@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Premium Peptide Products — BioPeptide Lab</title>
+<style>
+:root {
+  --bg:#f8fafc; --card:#fff; --text:#0f172a; --text2:#475569; --text3:#94a3b8;
+  --accent:#0ea5e9; --accent2:#0284c7; --gold:#f59e0b;
+  --green:#10b981; --red:#ef4444; --border:#e2e8f0;
+  --glp:#3b82f6; --hgh:#06b6d4; --repair:#f97316; --antiaging:#8b5cf6; --immune:#10b981; --other:#64748b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+.topbar{background:linear-gradient(135deg,#0f172a,#1e3a5f);color:#fff;padding:32px 16px 24px;text-align:center;position:sticky;top:0;z-index:10;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.topbar h1{font-size:1.2rem;font-weight:700;letter-spacing:-.3px}
+.topbar .sub{font-size:.7rem;opacity:.7;margin-top:4px}
+.topbar .badge{display:inline-block;margin-top:10px;padding:4px 12px;border-radius:12px;font-size:.65rem;font-weight:600;background:rgba(255,255,255,.1);letter-spacing:.5px}
+
+.cat-nav{display:flex;gap:6px;padding:8px 10px;overflow-x:auto;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:9;-webkit-overflow-scrolling:touch}
+.cat-chip{flex-shrink:0;padding:7px 14px;border-radius:18px;border:1.5px solid var(--border);background:#fff;font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;color:var(--text2)}
+.cat-chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.container{max-width:600px;margin:0 auto;padding:8px 12px 40px}
+
+.family-card{background:var(--card);border-radius:12px;margin-bottom:8px;overflow:hidden;border:1px solid var(--border);transition:all .15s}
+.family-card.open{box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.family-head{display:flex;align-items:center;padding:12px 14px;cursor:pointer;gap:10px;user-select:none;-webkit-tap-highlight-color:transparent}
+.family-head:active{background:#f8fafc}
+.family-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.family-info{flex:1;min-width:0}
+.family-name-row{display:flex;align-items:center;gap:6px}
+.family-name{font-size:.82rem;font-weight:700}
+.family-count{font-size:.65rem;color:var(--text3);background:#f1f5f9;padding:2px 8px;border-radius:8px;white-space:nowrap}
+.family-range{font-size:.78rem;font-weight:700;color:var(--accent2);flex-shrink:0}
+.family-arrow{font-size:.6rem;color:var(--text3);transition:transform .2s;flex-shrink:0}
+.family-card.open .family-arrow{transform:rotate(180deg)}
+
+.family-body{display:none;border-top:1px solid var(--border)}
+.family-card.open .family-body{display:block}
+
+.variant-row{display:flex;align-items:center;padding:10px 14px 10px 28px;gap:8px;border-bottom:1px solid #f1f5f9}
+.variant-row:last-child{border-bottom:none}
+.v-code{font-size:.72rem;font-weight:700;color:var(--text);min-width:44px}
+.v-name{font-size:.74rem;color:var(--text);flex:1}
+.v-spec{font-size:.68rem;color:var(--text3)}
+.v-price{font-size:.78rem;font-weight:700;color:var(--accent2);white-space:nowrap}
+
+.footer{text-align:center;padding:20px 16px;color:var(--text3);font-size:.65rem;line-height:1.8}
+.footer strong{color:var(--text2)}
+.search-wrap{padding:8px 10px;background:#fff;position:sticky;top:0;z-index:8;border-bottom:1px solid var(--border)}
+.search-wrap input{width:100%;padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);font-size:.78rem;outline:none;background:#f8fafc}
+.search-wrap input:focus{border-color:var(--accent);background:#fff}
+
+.empty-state{text-align:center;padding:40px;color:var(--text3);font-size:.8rem}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>🧬 Premium Peptide Products</h1>
+  <div class="sub">Professional Grade · Quality Assured</div>
+  <div class="badge">All prices in USD · 1 Box = 10 vials</div>
+</div>
+
+<div class="search-wrap">
+  <input type="text" id="searchInput" placeholder="Search by name or code..." oninput="filterProducts()">
+</div>
+
+<div class="cat-nav" id="catNav">
+  <button class="cat-chip active" data-cat="all" onclick="setCat('all')">All</button>
+  <button class="cat-chip" data-cat="glp" onclick="setCat('glp')">💉 GLP-1</button>
+  <button class="cat-chip" data-cat="hgh" onclick="setCat('hgh')">💪 HGH</button>
+  <button class="cat-chip" data-cat="repair" onclick="setCat('repair')">🔧 Repair</button>
+  <button class="cat-chip" data-cat="antiaging" onclick="setCat('antiaging')">⏳ Anti-Aging</button>
+  <button class="cat-chip" data-cat="immune" onclick="setCat('immune')">🛡 Immune</button>
+  <button class="cat-chip" data-cat="other" onclick="setCat('other')">📋 Other</button>
+</div>
+
+<div class="container" id="productList"></div>
+
+<div class="footer">
+  <strong>Contact us</strong><br>
+  WhatsApp for inquiries & orders<br>
+  Professional Grade · Premium Quality · Trusted Supplier
+</div>
+
+<script>
+const families = [
+  { id:"tirz", name:"Tirzepatide", cat:"glp", color:"#3b82f6", items:[
+    {code:"TR5",spec:"5mg×10vials",price:33},{code:"TR10",spec:"10mg×10vials",price:45},{code:"TR15",spec:"15mg×10vials",price:56},{code:"TR20",spec:"20mg×10vials",price:71},{code:"TR30",spec:"30mg×10vials",price:94},{code:"TR40",spec:"40mg×10vials",price:111},{code:"TR50",spec:"50mg×10vials",price:146},{code:"TR60",spec:"60mg×10vials",price:165},{code:"TR100",spec:"100mg×10vials",price:282},
+  ]},
+  { id:"reta", name:"Retatrutide", cat:"glp", color:"#8b5cf6", items:[
+    {code:"RT5",spec:"5mg×10vials",price:47},{code:"RT10",spec:"10mg×10vials",price:71},{code:"RT15",spec:"15mg×10vials",price:101},{code:"RT20",spec:"20mg×10vials",price:122},{code:"RT30",spec:"30mg×10vials",price:165},{code:"RT40",spec:"40mg×10vials",price:212},{code:"RT50",spec:"50mg×10vials",price:235},{code:"RT60",spec:"60mg×10vials",price:282},{code:"RT100",spec:"100mg×10vials",price:383},
+  ]},
+  { id:"sema", name:"Semaglutide", cat:"glp", color:"#10b981", items:[
+    {code:"SM20",spec:"20mg×10vials",price:66},{code:"SM40",spec:"40mg×10vials",price:154}
+  ]},
+  { id:"mazd", name:"Mazdutide", cat:"glp", color:"#f59e0b", items:[
+    {code:"MZ5",spec:"5mg×10vials",price:123},{code:"MZ10",spec:"10mg×10vials",price:258},{code:"MDT10",spec:"10mg×10vials",price:263}
+  ]},
+  { id:"surv", name:"Survodutide", cat:"glp", color:"#ec4899", items:[
+    {code:"SUR10",spec:"10mg×10vials",price:353}
+  ]},
+  { id:"cagr-sema", name:"Cagrilintide + Semaglutide", cat:"glp", color:"#f97316", items:[
+    {code:"CS5",spec:"2.5+2.5mg×10vials",price:75},{code:"CS10",spec:"5+5mg×10vials",price:165}
+  ]},
+  { id:"cagr", name:"Cagrilintide", cat:"glp", color:"#e879f9", items:[
+    {code:"CGL5",spec:"5mg×10vials",price:106},{code:"CGL10",spec:"10mg×10vials",price:200}
+  ]},
+  { id:"hgh", name:"HGH 191AA (Somatropin)", cat:"hgh", color:"#06b6d4", items:[
+    {code:"H10",spec:"10mg×10vials",price:45},{code:"H12",spec:"12mg×10vials",price:52},{code:"H15",spec:"15mg×10vials",price:59},{code:"H24",spec:"24mg×10vials",price:118},{code:"H36",spec:"36mg×10vials",price:175}
+  ]},
+  { id:"igf", name:"IGF-1 LR3", cat:"hgh", color:"#0d9488", items:[
+    {code:"IG01",spec:"0.1mg×10vials",price:42},{code:"IG1",spec:"1mg×10vials",price:176}
+  ]},
+  { id:"serm", name:"Sermorelin Acetate", cat:"hgh", color:"#6366f1", items:[
+    {code:"SMO5",spec:"5mg×10vials",price:71},{code:"SMO10",spec:"10mg×10vials",price:129}
+  ]},
+  { id:"ghrp2", name:"GHRP-2 Acetate", cat:"hgh", color:"#a855f7", items:[
+    {code:"G25",spec:"5mg×10vials",price:31},{code:"G210",spec:"10mg×10vials",price:49}
+  ]},
+  { id:"ghrp6", name:"GHRP-6 Acetate", cat:"hgh", color:"#c084fc", items:[
+    {code:"G65",spec:"5mg×10vials",price:31},{code:"G610",spec:"10mg×10vials",price:49}
+  ]},
+  { id:"ipa", name:"Ipamorelin", cat:"hgh", color:"#94a3b8", items:[
+    {code:"IP5",spec:"5mg×10vials",price:40},{code:"IP10",spec:"10mg×10vials",price:71}
+  ]},
+  { id:"cjc-dac", name:"CJC-1295 with DAC", cat:"hgh", color:"#64748b", items:[
+    {code:"CD5",spec:"5mg×10vials",price:153},{code:"CD10",spec:"10mg×10vials",price:295}
+  ]},
+  { id:"cjc-nodac", name:"CJC-1295 no DAC", cat:"hgh", color:"#78716c", items:[
+    {code:"CND5",spec:"5mg×10vials",price:85},{code:"CND10",spec:"10mg×10vials",price:136}
+  ]},
+  { id:"cjc-ipa", name:"CJC-1295 noDAC + Ipamorelin", cat:"hgh", color:"#a8a29e", items:[
+    {code:"CP10",spec:"5+5mg×10vials",price:106}
+  ]},
+  { id:"bpc", name:"BPC-157", cat:"repair", color:"#f97316", items:[
+    {code:"BP5",spec:"5mg×10vials",price:84},{code:"BP10",spec:"10mg×10vials",price:180}
+  ]},
+  { id:"tb500", name:"TB-500 (Thymosin Beta-4)", cat:"repair", color:"#fb923c", items:[
+    {code:"BT5",spec:"5mg×10vials",price:64},{code:"BT10",spec:"10mg×10vials",price:132}
+  ]},
+  { id:"bpc-tb", name:"BPC-157 + TB-500", cat:"repair", color:"#ef4444", items:[
+    {code:"BB10",spec:"5+5mg×10vials",price:89},{code:"BB20",spec:"10+10mg×10vials",price:165}
+  ]},
+  { id:"kpv", name:"KPV", cat:"repair", color:"#eab308", items:[
+    {code:"KPV5",spec:"5mg×10vials",price:30},{code:"KPV10",spec:"10mg×10vials",price:68}
+  ]},
+  { id:"ghk-cu", name:"GHK-Cu (Copper Peptide)", cat:"repair", color:"#ca8a04", items:[
+    {code:"CU50",spec:"50mg×10vials",price:24},{code:"CU100",spec:"100mg×10vials",price:40}
+  ]},
+  { id:"klv", name:"KLV Blend", cat:"repair", color:"#dc2626", items:[
+    {code:"KLW80",spec:"80mg×10vials",price:270}
+  ]},
+  { id:"glow", name:"GLOW Blend", cat:"repair", color:"#ea580c", items:[
+    {code:"GLOW70",spec:"70mg×10vials",price:250}
+  ]},
+  { id:"nad", name:"NAD+", cat:"antiaging", color:"#22d3ee", items:[
+    {code:"NJ100",spec:"100mg×10vials",price:33},{code:"NJ500",spec:"500mg×10vials",price:59},{code:"NJ1000",spec:"1000mg×10vials",price:129}
+  ]},
+  { id:"epi", name:"Epithalon", cat:"antiaging", color:"#a78bfa", items:[
+    {code:"ET10",spec:"10mg×10vials",price:42},{code:"ET50",spec:"50mg×10vials",price:132}
+  ]},
+  { id:"thy-a1", name:"Thymosin Alpha-1", cat:"antiaging", color:"#c084fc", items:[
+    {code:"TA5",spec:"5mg×10vials",price:94},{code:"TA10",spec:"10mg×10vials",price:153}
+  ]},
+  { id:"thymalin", name:"Thymalin", cat:"antiaging", color:"#818cf8", items:[
+    {code:"TYI0",spec:"10mg×10vials",price:66}
+  ]},
+  { id:"ss31", name:"SS-31 (Elamipretide)", cat:"antiaging", color:"#f472b6", items:[
+    {code:"2S10",spec:"10mg×10vials",price:82},{code:"2S50",spec:"50mg×10vials",price:400}
+  ]},
+  { id:"mots", name:"MOTS-C", cat:"antiaging", color:"#fb7185", items:[
+    {code:"MS10",spec:"10mg×10vials",price:59},{code:"MS20",spec:"20mg×10vials",price:110},{code:"MS40",spec:"40mg×10vials",price:224}
+  ]},
+  { id:"aod", name:"AOD9604", cat:"antiaging", color:"#e11d48", items:[
+    {code:"5AD",spec:"5mg×10vials",price:94},{code:"10AD",spec:"10mg×10vials",price:176}
+  ]},
+  { id:"selank", name:"Selank", cat:"immune", color:"#4ade80", items:[
+    {code:"SK5",spec:"5mg×10vials",price:47},{code:"SK10",spec:"10mg×10vials",price:82}
+  ]},
+  { id:"semax", name:"Semax", cat:"immune", color:"#86efac", items:[
+    {code:"SX5",spec:"5mg×10vials",price:30},{code:"SX10",spec:"10mg×10vials",price:60}
+  ]},
+  { id:"ara", name:"ARA-290", cat:"immune", color:"#67e8f9", items:[
+    {code:"RA10",spec:"10mg×10vials",price:73}
+  ]},
+  { id:"dsip", name:"DSIP", cat:"immune", color:"#7dd3fc", items:[
+    {code:"DS5",spec:"5mg×10vials",price:38},{code:"DS10",spec:"10mg×10vials",price:82}
+  ]},
+  { id:"tesa", name:"Tesamorelin", cat:"immune", color:"#fed7aa", items:[
+    {code:"TSM5",spec:"5mg×10vials",price:94},{code:"TSM10",spec:"10mg×10vials",price:169},{code:"TSM20",spec:"20mg×10vials",price:329}
+  ]},
+  { id:"bbg", name:"BBG Blend", cat:"immune", color:"#fdba74", items:[
+    {code:"BBG70",spec:"70mg×10vials",price:240}
+  ]},
+  { id:"pt141", name:"PT-141 (Bremelanotide)", cat:"other", color:"#f43f5e", items:[
+    {code:"P41",spec:"10mg×10vials",price:66}
+  ]},
+  { id:"aicar", name:"Aicar", cat:"other", color:"#ec4899", items:[
+    {code:"AR50",spec:"50mg×10vials",price:64}
+  ]},
+  { id:"kiss", name:"Kisspeptin-10", cat:"other", color:"#f472b6", items:[
+    {code:"KS5",spec:"5mg×10vials",price:52},{code:"KS10",spec:"10mg×10vials",price:89}
+  ]},
+  { id:"mt1", name:"Melanotan 1", cat:"other", color:"#8b5cf6", items:[
+    {code:"MT1",spec:"10mg×10vials",price:42}
+  ]},
+  { id:"mt2", name:"Melanotan 2", cat:"other", color:"#7c3aed", items:[
+    {code:"MT2",spec:"10mg×10vials",price:47}
+  ]},
+  { id:"hcg", name:"HCG", cat:"other", color:"#6366f1", items:[
+    {code:"HCG1K",spec:"1000iu×10vials",price:20},{code:"HCG2K",spec:"2000iu×10vials",price:30},{code:"HCG5K",spec:"5000iu×10vials",price:72},{code:"HCG10K",spec:"10000iu×10vials",price:133}
+  ]},
+  { id:"lemon", name:"Lemon Bottle", cat:"other", color:"#eab308", items:[
+    {code:"LB",spec:"10mg×10vials",price:41}
+  ]},
+  { id:"lipo", name:"Lipo-C", cat:"other", color:"#f59e0b", items:[
+    {code:"LC216",spec:"10mg×10vials",price:50}
+  ]},
+  { id:"adipo", name:"Adipotide", cat:"other", color:"#ef4444", items:[
+    {code:"AP5",spec:"5mg×10vials",price:165}
+  ]},
+  { id:"bac-wa", name:"BAC Water (WA)", cat:"other", color:"#94a3b8", items:[
+    {code:"WA3",spec:"3ml×10vials",price:7},{code:"WA10",spec:"10ml×10vials",price:9}
+  ]},
+  { id:"bac-ba", name:"BAC Water (BA)", cat:"other", color:"#64748b", items:[
+    {code:"BA3",spec:"3ml×10vials",price:7},{code:"BA10",spec:"10ml×10vials",price:9}
+  ]},
+];
+
+let currentCat = 'all';
+let searchTerm = '';
+
+function setCat(cat) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active'));
+  document.querySelector(`.cat-chip[data-cat="${cat}"]`).classList.add('active');
+  renderProducts();
+}
+
+function filterProducts() {
+  searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+  renderProducts();
+}
+
+function renderProducts() {
+  const container = document.getElementById('productList');
+  let visible = families;
+  if (currentCat !== 'all') visible = families.filter(f=>f.cat===currentCat);
+  if (searchTerm) {
+    visible = families.filter(f=>{
+      const matchName = f.name.toLowerCase().includes(searchTerm);
+      const matchCode = f.items.some(it=>it.code.toLowerCase().includes(searchTerm));
+      const matchSpec = f.items.some(it=>it.spec.toLowerCase().includes(searchTerm));
+      return matchName || matchCode || matchSpec;
+    });
+  }
+  if (visible.length===0) {
+    container.innerHTML = '<div class="empty-state">No products found</div>';
+    return;
+  }
+  container.innerHTML = visible.map(f=>{
+    const prices = f.items.map(i=>i.price);
+    const range = prices.length>1 ? `$${Math.min(...prices)}–$${Math.max(...prices)}` : `$${prices[0]}`;
+    return `<div class="family-card">
+      <div class="family-head" onclick="this.parentElement.classList.toggle('open')">
+        <div class="family-dot" style="background:${f.color}"></div>
+        <div class="family-info">
+          <div class="family-name-row">
+            <span class="family-name">${f.name}</span>
+            <span class="family-count">${f.items.length} specs</span>
+          </div>
+        </div>
+        <span class="family-range">${range}</span>
+        <span class="family-arrow">▼</span>
+      </div>
+      <div class="family-body">
+        ${f.items.map(it=>`<div class="variant-row">
+          <span class="v-code">${it.code}</span>
+          <span class="v-spec">${it.spec}</span>
+          <span class="v-price">$${it.price}<span style="font-weight:400;font-size:.65rem;color:var(--text3)">/box</span></span>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+renderProducts();
+</script>
+</body>
+</html>
