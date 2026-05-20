@@ -169,15 +169,14 @@ body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:
 .cart-total-price{color:var(--accent2);font-size:1.05rem}
 
 .cart-actions{display:flex;gap:8px}
-.btn-copy{
+.btn-confirm{
   flex:1;padding:12px;
   border-radius:12px;border:none;
   background:var(--accent);color:#fff;
   font-size:.8rem;font-weight:600;cursor:pointer;
   transition:all .15s;
 }
-.btn-copy:active{background:var(--accent2)}
-.btn-copy.copied{background:var(--green)}
+.btn-confirm:active{background:var(--accent2)}
 
 .btn-clear{
   padding:12px 18px;
@@ -206,78 +205,93 @@ body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:
 }
 .toast.show{opacity:1}
 
-/* Batch Procurement Modal */
-.batch-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.4);
-  z-index:250;display:none;
+/* Confirmation Offer Modal */
+.confirm-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);
+  z-index:300;display:none;
   justify-content:center;align-items:center;padding:20px;
 }
-.batch-overlay.open{display:flex}
-.batch-modal{
-  background:#fff;border-radius:16px;
-  width:100%;max-width:520px;max-height:85vh;
-  display:flex;flex-direction:column;
-  animation:fadeIn .2s ease;
-}
-@keyframes fadeIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
-.batch-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:16px 20px;border-bottom:1px solid var(--border);
-}
-.batch-title{font-size:.92rem;font-weight:700}
-.batch-close{
-  width:32px;height:32px;border-radius:50%;
-  border:1px solid var(--border);background:#fff;
-  font-size:1rem;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  color:var(--text2);
-}
-.batch-body{padding:16px 20px;overflow-y:auto;flex:1}
-.batch-body textarea{
-  width:100%;height:160px;
-  border:1.5px solid var(--border);
-  border-radius:12px;padding:12px;
-  font-size:.75rem;font-family:monospace;
-  resize:vertical;outline:none;
-  background:var(--bg);
-}
-.batch-body textarea:focus{border-color:var(--accent);background:#fff}
-.batch-hint{font-size:.65rem;color:var(--text3);margin-top:6px}
+.confirm-overlay.open{display:flex}
 
-.batch-results{margin-top:12px}
-.batch-result-item{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 0;border-bottom:1px solid #f1f5f9;
-  font-size:.74rem;
+.confirm-modal{
+  background:#fff;border-radius:20px;
+  width:100%;max-width:420px;
+  text-align:center;
+  padding:32px 24px 24px;
+  animation:fadeIn .25s ease;
+  box-shadow:0 8px 40px rgba(0,0,0,.15);
 }
-.batch-result-item.found{color:var(--text)}
-.batch-result-item.not-found{color:var(--red)}
-.batch-result-code{font-weight:700;min-width:52px}
-.batch-result-name{flex:1}
-.batch-result-qty{font-weight:600;color:var(--accent2);min-width:60px;text-align:right}
-.batch-result-status{font-size:.65rem;min-width:50px;text-align:right}
+@keyframes fadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
 
-.batch-footer{
-  border-top:1px solid var(--border);
-  padding:16px 20px;display:flex;gap:8px;
+.confirm-badge{
+  display:inline-block;
+  background:linear-gradient(135deg,#f59e0b,#f97316);
+  color:#fff;
+  padding:6px 18px;border-radius:20px;
+  font-size:.7rem;font-weight:700;
+  letter-spacing:.5px;
+  margin-bottom:16px;
+  animation:pulse 2s infinite;
 }
-.btn-batch-apply{
-  flex:1;padding:12px;
-  border-radius:12px;border:none;
-  background:var(--accent);color:#fff;
-  font-size:.8rem;font-weight:600;cursor:pointer;
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+
+.confirm-title{
+  font-size:1.1rem;font-weight:800;
+  color:#0f172a;
+  margin-bottom:20px;
+}
+
+/* Countdown Timer */
+.countdown-box{
+  background:#fef3c7;
+  border:2px solid #f59e0b;
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:20px;
+}
+.countdown-label{font-size:.65rem;color:#92400e;font-weight:600;margin-bottom:4px}
+.countdown-timer{
+  font-size:2.4rem;font-weight:800;
+  color:#d97706;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:2px;
+}
+.countdown-timer.urgent{color:#ef4444;animation:blink .6s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
+
+.confirm-offer{
+  background:#f0fdf4;
+  border:1.5px solid #10b981;
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:16px;
+}
+.confirm-offer-text{font-size:.85rem;font-weight:700;color:#065f46}
+.confirm-offer-sub{font-size:.7rem;color:#047857;margin-top:2px}
+
+.confirm-hint{
+  font-size:.72rem;color:#64748b;
+  margin-bottom:20px;
+  line-height:1.5;
+}
+
+.btn-copy-order{
+  width:100%;padding:14px;
+  border-radius:14px;border:none;
+  background:linear-gradient(135deg,#0ea5e9,#0284c7);
+  color:#fff;
+  font-size:.85rem;font-weight:700;cursor:pointer;
   transition:all .15s;
 }
-.btn-batch-apply:active{background:var(--accent2)}
-.btn-batch-apply:disabled{background:var(--text3);cursor:not-allowed}
-.btn-batch-parse{
-  padding:12px 18px;
-  border-radius:12px;border:1.5px solid var(--accent);
-  background:#fff;color:var(--accent);
-  font-size:.78rem;font-weight:600;cursor:pointer;
-  transition:all .15s;
+.btn-copy-order:active{filter:brightness(.9)}
+.btn-copy-order.copied{background:#10b981}
+
+.confirm-close{
+  margin-top:12px;
+  background:none;border:none;
+  color:#94a3b8;font-size:.7rem;
+  cursor:pointer;padding:4px;
 }
-.btn-batch-parse:active{background:#f0f9ff}
 </style>
 </head>
 <body>
@@ -332,42 +346,38 @@ body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:
         <span class="cart-total-price" id="cartTotal">$0</span>
       </div>
       <div class="cart-actions">
-        <button class="btn-copy" id="btnCopy" onclick="copyCart()">📋 Copy Order List</button>
-        <button class="btn-clear" onclick="clearCart()">Clear</button>
-        <button class="btn-clear" onclick="openBatchModal()" style="background:var(--accent);color:#fff;border-color:var(--accent)">📥 Batch Import</button>
+        <button class="btn-confirm" onclick="openConfirmModal()">✅ Confirm Order</button>
+        <button class="btn-clear" onclick="clearCart()">🗑 Clear All</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Batch Procurement Modal -->
-<div class="batch-overlay" id="batchOverlay" onclick="if(event.target===this)closeBatchModal()">
-  <div class="batch-modal">
-    <div class="batch-header">
-      <span class="batch-title">📥 Batch Import — Paste Order List</span>
-      <button class="batch-close" onclick="closeBatchModal()">✕</button>
+<!-- Confirmation / Limited Time Offer Modal -->
+<div class="confirm-overlay" id="confirmOverlay" onclick="if(event.target===this)closeConfirmModal()">
+  <div class="confirm-modal">
+    <div class="confirm-badge">⚡ LIMITED TIME OFFER</div>
+    <div class="confirm-title">Hurry! Your Discount Is Ticking</div>
+
+    <div class="countdown-box">
+      <div class="countdown-label">OFFER EXPIRES IN</div>
+      <div class="countdown-timer" id="countdownTimer">30:00</div>
     </div>
-    <div class="batch-body">
-      <textarea id="batchTextarea" placeholder="Paste your order list here...
 
-Format example:
-=== Order List ===
-
-1. TR15  Tirzepatide  15mg×10vials
-   Qty: 2 box(es) × $56 = $112
-
-2. H10  HGH 191AA (Somatropin)  10mg×10vials
-   Qty: 1 box(es) × $45 = $45
-
-Total: $157
-Items: 3 box(es)"></textarea>
-      <div class="batch-hint">Supports the format copied from 📋 Copy Order List. Codes not found in catalog will be flagged in red.</div>
-      <div class="batch-results" id="batchResults"></div>
+    <div class="confirm-offer">
+      <div class="confirm-offer-text">🎉 Limited Time Offer: 5% Off</div>
+      <div class="confirm-offer-sub">Discount applied automatically on your order</div>
     </div>
-    <div class="batch-footer">
-      <button class="btn-batch-parse" onclick="parseAndPreview()">🔍 Recognize</button>
-      <button class="btn-batch-apply" id="btnBatchApply" onclick="applyBatchCart()" disabled>Add All to Cart</button>
+
+    <div class="confirm-hint">
+      Please copy the order list and send it to<br>your dedicated customer service representative ASAP
     </div>
+
+    <button class="btn-copy-order" id="btnCopyOrder" onclick="copyOrderFromConfirm()">
+      📋 Copy Order List
+    </button>
+
+    <button class="confirm-close" onclick="closeConfirmModal()">Close</button>
   </div>
 </div>
 
@@ -519,7 +529,8 @@ const families = [
 ];
 
 // --- Cart state ---
-let cart = {}; // key: item code, value: {family, code, spec, price, qty}
+let cart = {};
+let confirmTimer = null;
 
 function saveCart(){ localStorage.setItem('biopeptide_cart', JSON.stringify(cart)); }
 function loadCart(){
@@ -585,7 +596,7 @@ function updateCartUI(){
     countEl.style.display = 'none';
   }
   document.getElementById('cartTotal').textContent = '$' + getCartTotal();
-  renderProducts(); // re-render to update button states
+  renderProducts();
 }
 
 function renderCartItems(){
@@ -621,10 +632,8 @@ function toggleCart(){
   }
 }
 
-function copyCart(){
+function buildOrderText() {
   const entries = Object.values(cart);
-  if (entries.length === 0) { showToast('Cart is empty'); return; }
-
   let text = '=== Order List ===\n\n';
   entries.forEach((c, i) => {
     text += `${i+1}. ${c.code}  ${c.family}  ${c.spec}\n`;
@@ -632,15 +641,11 @@ function copyCart(){
   });
   text += `Total: $${getCartTotal()}\n`;
   text += `Items: ${getCartCount()} box(es)\n`;
+  return text;
+}
 
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = document.getElementById('btnCopy');
-    btn.textContent = '✅ Copied!';
-    btn.classList.add('copied');
-    showToast('Order copied to clipboard!');
-    setTimeout(() => { btn.textContent = '📋 Copy Order List'; btn.classList.remove('copied'); }, 2000);
-  }).catch(() => {
-    // Fallback for non-HTTPS
+function copyTextToClipboard(text) {
+  navigator.clipboard.writeText(text).catch(() => {
     const ta = document.createElement('textarea');
     ta.value = text;
     ta.style.position = 'fixed'; ta.style.left = '-9999px';
@@ -648,8 +653,73 @@ function copyCart(){
     ta.select();
     document.execCommand('copy');
     document.body.removeChild(ta);
-    showToast('Order copied!');
   });
+}
+
+// --- Confirmation Modal with Countdown ---
+function openConfirmModal() {
+  const entries = Object.values(cart);
+  if (entries.length === 0) { showToast('Cart is empty'); return; }
+
+  // Close cart drawer first
+  document.getElementById('cartOverlay').classList.remove('open');
+
+  // Reset & start countdown
+  startCountdown();
+  document.getElementById('btnCopyOrder').textContent = '📋 Copy Order List';
+  document.getElementById('btnCopyOrder').classList.remove('copied');
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+
+function closeConfirmModal() {
+  document.getElementById('confirmOverlay').classList.remove('open');
+  if (confirmTimer) { clearInterval(confirmTimer); confirmTimer = null; }
+}
+
+function startCountdown() {
+  if (confirmTimer) clearInterval(confirmTimer);
+  const timerEl = document.getElementById('countdownTimer');
+  let seconds = 30 * 60; // 30 minutes
+
+  function tick() {
+    const min = Math.floor(seconds / 60);
+    const sec = seconds % 60;
+    timerEl.textContent = String(min).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+
+    // Flash red when under 5 minutes
+    if (seconds <= 300) {
+      timerEl.classList.add('urgent');
+    } else {
+      timerEl.classList.remove('urgent');
+    }
+
+    if (seconds <= 0) {
+      clearInterval(confirmTimer);
+      confirmTimer = null;
+      timerEl.textContent = '00:00';
+    }
+    seconds--;
+  }
+
+  tick();
+  confirmTimer = setInterval(tick, 1000);
+}
+
+function copyOrderFromConfirm() {
+  const entries = Object.values(cart);
+  if (entries.length === 0) { showToast('Cart is empty'); return; }
+
+  const text = buildOrderText();
+  copyTextToClipboard(text);
+
+  const btn = document.getElementById('btnCopyOrder');
+  btn.textContent = '✅ Copied Successfully!';
+  btn.classList.add('copied');
+  showToast('✅ Order copied! Send to your representative now.');
+  setTimeout(() => {
+    btn.textContent = '📋 Copy Order List';
+    btn.classList.remove('copied');
+  }, 2500);
 }
 
 function showToast(msg){
@@ -657,7 +727,7 @@ function showToast(msg){
   toast.textContent = msg;
   toast.classList.add('show');
   clearTimeout(toast._timeout);
-  toast._timeout = setTimeout(() => toast.classList.remove('show'), 1800);
+  toast._timeout = setTimeout(() => toast.classList.remove('show'), 2200);
 }
 
 // --- Catalog rendering ---
@@ -726,109 +796,6 @@ function renderProducts() {
       </div>
     </div>`;
   }).join('');
-}
-
-// --- Batch Procurement ---
-let batchParsedItems = [];
-
-function buildProductIndex() {
-  const index = {};
-  families.forEach(f => {
-    f.items.forEach(it => {
-      index[it.code] = { family: f.name, code: it.code, spec: it.spec, price: it.price };
-    });
-  });
-  return index;
-}
-
-function openBatchModal() {
-  document.getElementById('batchOverlay').classList.add('open');
-  document.getElementById('batchResults').innerHTML = '';
-  document.getElementById('btnBatchApply').disabled = true;
-  batchParsedItems = [];
-  if (document.getElementById('cartOverlay').classList.contains('open')) {
-    toggleCart();
-  }
-}
-
-function closeBatchModal() {
-  document.getElementById('batchOverlay').classList.remove('open');
-}
-
-function parseAndPreview() {
-  const text = document.getElementById('batchTextarea').value.trim();
-  if (!text) { showToast('Please paste an order list first'); return; }
-
-  const productIndex = buildProductIndex();
-  const lines = text.split('\n');
-  const results = [];
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-    // Match: "N. CODE  Name  spec-with-dose"
-    const itemMatch = line.match(/^(\d+)\.\s+(\S+)\s+(.+)\s+(.+×\d+\s*vials)$/i);
-    if (!itemMatch) continue;
-
-    const code = itemMatch[2];
-    const name = itemMatch[3].trim();
-    const spec = itemMatch[4];
-
-    let qty = 1;
-    if (i + 1 < lines.length) {
-      const qtyMatch = lines[i + 1].trim().match(/^Qty:\s*(\d+)\s*box/i);
-      if (qtyMatch) qty = parseInt(qtyMatch[1]);
-    }
-
-    const product = productIndex[code];
-    results.push({
-      code, name, spec, qty,
-      found: !!product,
-      price: product ? product.price : null,
-      family: product ? product.family : null,
-    });
-  }
-
-  batchParsedItems = results;
-
-  const container = document.getElementById('batchResults');
-  if (results.length === 0) {
-    container.innerHTML = '<div class="empty-state">No valid order items found. Check the format and try again.</div>';
-    document.getElementById('btnBatchApply').disabled = true;
-    return;
-  }
-
-  const foundCount = results.filter(r => r.found).length;
-  const notFoundCount = results.filter(r => !r.found).length;
-
-  container.innerHTML =
-    `<div style="font-size:.7rem;color:var(--text3);margin-bottom:8px">
-      Recognized ${results.length} item(s) — <span style="color:var(--green)">${foundCount} matched</span>${notFoundCount > 0 ? ` · <span style="color:var(--red)">${notFoundCount} not found</span>` : ''}
-    </div>` +
-    results.map(r => `
-      <div class="batch-result-item ${r.found ? 'found' : 'not-found'}">
-        <span class="batch-result-code">${r.code}</span>
-        <span class="batch-result-name">${r.found ? r.family : (r.name || 'Unknown')}</span>
-        <span class="batch-result-qty">×${r.qty} ${r.found ? '· $'+(r.price*r.qty) : ''}</span>
-        <span class="batch-result-status">${r.found ? '✅' : '❌ Not found'}</span>
-      </div>
-    `).join('');
-
-  document.getElementById('btnBatchApply').disabled = (foundCount === 0);
-}
-
-function applyBatchCart() {
-  const validItems = batchParsedItems.filter(r => r.found);
-  if (validItems.length === 0) { showToast('No valid items to add'); return; }
-
-  validItems.forEach(r => {
-    cart[r.code] = { family: r.family, code: r.code, spec: r.spec, price: r.price, qty: r.qty };
-  });
-
-  saveCart();
-  updateCartUI();
-  renderCartItems();
-  closeBatchModal();
-  showToast(`✅ ${validItems.length} item(s) added to cart`);
 }
 
 renderProducts();
