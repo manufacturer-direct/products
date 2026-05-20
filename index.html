@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Premium Peptide Products — BioPeptide Lab</title>
 <style>
 :root {
@@ -321,7 +324,8 @@ body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:
 <div class="footer">
   <strong>Contact us</strong><br>
   WhatsApp for inquiries & orders<br>
-  Professional Grade · Premium Quality · Trusted Supplier
+  Professional Grade · Premium Quality · Trusted Supplier<br>
+  <span style="font-size:.55rem;color:var(--text3);opacity:.5">v.3</span>
 </div>
 
 <!-- Floating Cart Button -->
@@ -527,6 +531,18 @@ const families = [
     {code:"BA3",spec:"3ml×10vials",price:7},{code:"BA10",spec:"10ml×10vials",price:9}
   ]},
 ];
+
+// --- Version check for cache busting ---
+const APP_VERSION = '3';
+(function(){
+  const stored = localStorage.getItem('biopeptide_version');
+  if (stored && stored !== APP_VERSION) {
+    localStorage.setItem('biopeptide_version', APP_VERSION);
+    location.reload(true);
+    return;
+  }
+  localStorage.setItem('biopeptide_version', APP_VERSION);
+})();
 
 // --- Cart state ---
 let cart = {};
