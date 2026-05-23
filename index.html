@@ -325,7 +325,7 @@ body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:
   <strong>Contact us</strong><br>
   WhatsApp for inquiries & orders<br>
   Professional Grade · Premium Quality · Trusted Supplier<br>
-  <span style="font-size:.55rem;color:var(--text3);opacity:.5">v.4</span>
+  <span style="font-size:.55rem;color:var(--text3);opacity:.5">v.5</span>
 </div>
 
 <!-- Floating Cart Button -->
@@ -438,7 +438,7 @@ const families = [
     {code:"CP10",spec:"5+5mg×10vials",price:106}
   ]},
   { id:"bpc", name:"BPC-157", cat:"repair", color:"#f97316", items:[
-    {code:"BP5",spec:"5mg×10vials",price:84},{code:"BP10",spec:"20mg×10vials",price:180}
+    {code:"BP5",spec:"10mg×10vials",price:84},{code:"BP10",spec:"20mg×10vials",price:180}
   ]},
   { id:"tb500", name:"TB-500 (Thymosin Beta-4)", cat:"repair", color:"#fb923c", items:[
     {code:"BT5",spec:"5mg×10vials",price:64},{code:"BT10",spec:"10mg×10vials",price:132}
@@ -533,7 +533,7 @@ const families = [
 ];
 
 // --- Version check for cache busting ---
-const APP_VERSION = '4';
+const APP_VERSION = '5';
 (function(){
   const stored = localStorage.getItem('biopeptide_version');
   if (stored && stored !== APP_VERSION) {
