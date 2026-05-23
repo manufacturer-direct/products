@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Product Stock List — BioPeptide Lab</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Segoe UI',sans-serif;background:#0f172a;color:#e2e8f0;padding:0 0 40px}
+
+.header{
+  background:linear-gradient(135deg,#0f172a,#1e3a5f);
+  padding:20px 16px 16px;text-align:center;
+  position:sticky;top:0;z-index:10;
+  border-bottom:2px solid #f59e0b;
+}
+.header h1{font-size:1rem;font-weight:700}
+.header .sub{font-size:.65rem;color:#94a3b8;margin-top:2px}
+
+.summary-bar{
+  display:flex;gap:8px;padding:10px 12px;
+  overflow-x:auto;background:#1e293b;
+  font-size:.62rem;white-space:nowrap;
+  position:sticky;top:0;z-index:9;
+}
+.summary-chip{
+  flex-shrink:0;padding:4px 10px;border-radius:10px;
+  background:#334155;color:#cbd5e1;
+}
+.summary-chip b{color:#f59e0b}
+
+.cat-header{
+  background:#1e293b;padding:10px 14px;
+  font-size:.78rem;font-weight:700;color:#38bdf8;
+  position:sticky;top:0;z-index:8;
+  border-bottom:1px solid #334155;
+  display:flex;justify-content:space-between;
+  align-items:center;
+}
+
+.table-wrap{overflow-x:auto}
+
+table{width:100%;border-collapse:collapse;font-size:.72rem}
+th{text-align:left;padding:6px 8px;font-size:.6rem;color:#64748b;font-weight:600;text-transform:uppercase;background:#0f172a;position:sticky;top:0;z-index:7}
+th.right{text-align:right}
+td{padding:7px 8px;border-bottom:1px solid #1e293b}
+td.right{text-align:right;font-weight:600}
+
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+
+.code{font-size:.6rem;color:#38bdf8;font-weight:700;display:block}
+.name{font-weight:600;color:#f1f5f9}
+.spec{font-size:.62rem;color:#94a3b8}
+.price{color:#e2e8f0}
+.stock{color:#34d399;font-weight:700}
+.amount{color:#fbbf24;font-weight:700}
+
+.cat-total{
+  background:#1e293b;
+  padding:6px 14px;
+  font-size:.65rem;color:#94a3b8;
+  text-align:right;
+  border-top:1px solid #334155;
+}
+.cat-total b{color:#f59e0b}
+
+.footer{
+  text-align:center;padding:24px 16px;
+  font-size:.6rem;color:#475569;
+}
+
+@media(min-width:640px){
+  body{max-width:680px;margin:0 auto}
+  .header h1{font-size:1.3rem}
+  table{font-size:.78rem}
+  .code{font-size:.65rem}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Product Stock List</h1>
+  <div class="sub">USD / Box (10 vials) &nbsp;|&nbsp; Updated 2026.05.24</div>
+</div>
+
+<div class="summary-bar" id="summaryBar"></div>
+
+<div id="content"></div>
+
+<div class="footer">BioPeptide Lab &mdash; Professional Grade &middot; Premium Quality &middot; Trusted Supplier</div>
+
+<script>
+const families = [
+  {name:"Tirzepatide",cat:"GLP-1",items:[
+    {code:"TR5",spec:"5mg",price:33},{code:"TR10",spec:"10mg",price:45},{code:"TR15",spec:"15mg",price:56},{code:"TR20",spec:"20mg",price:71},{code:"TR30",spec:"30mg",price:94},{code:"TR40",spec:"40mg",price:111},{code:"TR50",spec:"50mg",price:146},{code:"TR60",spec:"60mg",price:165},{code:"TR100",spec:"100mg",price:282},
+  ]},
+  {name:"Retatrutide",cat:"GLP-1",items:[
+    {code:"RT5",spec:"5mg",price:47},{code:"RT10",spec:"10mg",price:71},{code:"RT15",spec:"15mg",price:101},{code:"RT20",spec:"20mg",price:122},{code:"RT30",spec:"30mg",price:165},{code:"RT40",spec:"40mg",price:212},{code:"RT50",spec:"50mg",price:235},{code:"RT60",spec:"60mg",price:282},{code:"RT100",spec:"100mg",price:383},
+  ]},
+  {name:"Semaglutide",cat:"GLP-1",items:[
+    {code:"SM20",spec:"20mg",price:66},{code:"SM40",spec:"40mg",price:154},
+  ]},
+  {name:"Mazdutide",cat:"GLP-1",items:[
+    {code:"MZ5",spec:"5mg",price:123},{code:"MZ10",spec:"10mg",price:258},{code:"MDT10",spec:"10mg",price:263},
+  ]},
+  {name:"Survodutide",cat:"GLP-1",items:[
+    {code:"SUR10",spec:"10mg",price:353},
+  ]},
+  {name:"Cagrilintide + Semaglutide",cat:"GLP-1",items:[
+    {code:"CS5",spec:"2.5+2.5mg",price:75},{code:"CS10",spec:"5+5mg",price:165},
+  ]},
+  {name:"Cagrilintide",cat:"GLP-1",items:[
+    {code:"CGL5",spec:"5mg",price:106},{code:"CGL10",spec:"10mg",price:200},
+  ]},
+  {name:"HGH 191AA",cat:"HGH",items:[
+    {code:"H10",spec:"10mg",price:45},{code:"H12",spec:"12mg",price:52},{code:"H15",spec:"15mg",price:59},{code:"H24",spec:"24mg",price:118},{code:"H36",spec:"36mg",price:175},
+  ]},
+  {name:"IGF-1 LR3",cat:"HGH",items:[
+    {code:"IG01",spec:"0.1mg",price:42},{code:"IG1",spec:"1mg",price:176},
+  ]},
+  {name:"Sermorelin Acetate",cat:"HGH",items:[
+    {code:"SMO5",spec:"5mg",price:71},{code:"SMO10",spec:"10mg",price:129},
+  ]},
+  {name:"GHRP-2 Acetate",cat:"HGH",items:[
+    {code:"G25",spec:"5mg",price:31},{code:"G210",spec:"10mg",price:49},
+  ]},
+  {name:"GHRP-6 Acetate",cat:"HGH",items:[
+    {code:"G65",spec:"5mg",price:31},{code:"G610",spec:"10mg",price:49},
+  ]},
+  {name:"Ipamorelin",cat:"HGH",items:[
+    {code:"IP5",spec:"5mg",price:40},{code:"IP10",spec:"10mg",price:71},
+  ]},
+  {name:"CJC-1295 with DAC",cat:"HGH",items:[
+    {code:"CD5",spec:"5mg",price:153},{code:"CD10",spec:"10mg",price:295},
+  ]},
+  {name:"CJC-1295 no DAC",cat:"HGH",items:[
+    {code:"CND5",spec:"5mg",price:85},{code:"CND10",spec:"10mg",price:136},
+  ]},
+  {name:"CJC-1295 noDAC + Ipamorelin",cat:"HGH",items:[
+    {code:"CP10",spec:"5+5mg",price:106},
+  ]},
+  {name:"BPC-157",cat:"Repair",items:[
+    {code:"BP5",spec:"5mg",price:84},{code:"BP10",spec:"10mg",price:180},
+  ]},
+  {name:"TB-500",cat:"Repair",items:[
+    {code:"BT5",spec:"5mg",price:64},{code:"BT10",spec:"10mg",price:132},
+  ]},
+  {name:"BPC-157 + TB-500",cat:"Repair",items:[
+    {code:"BB10",spec:"10+10mg",price:89},{code:"BB20",spec:"20+20mg",price:165},
+  ]},
+  {name:"KPV",cat:"Repair",items:[
+    {code:"KPV5",spec:"5mg",price:30},{code:"KPV10",spec:"10mg",price:68},
+  ]},
+  {name:"GHK-Cu",cat:"Repair",items:[
+    {code:"CU50",spec:"50mg",price:24},{code:"CU100",spec:"100mg",price:40},
+  ]},
+  {name:"KLV Blend",cat:"Repair",items:[
+    {code:"KLW80",spec:"80mg",price:270},
+  ]},
+  {name:"GLOW Blend",cat:"Repair",items:[
+    {code:"GLOW70",spec:"70mg",price:250},
+  ]},
+  {name:"NAD+",cat:"Anti-Aging",items:[
+    {code:"NJ100",spec:"100mg",price:33},{code:"NJ500",spec:"500mg",price:59},{code:"NJ1000",spec:"1000mg",price:129},
+  ]},
+  {name:"Epithalon",cat:"Anti-Aging",items:[
+    {code:"ET10",spec:"10mg",price:42},{code:"ET50",spec:"50mg",price:132},
+  ]},
+  {name:"Thymosin Alpha-1",cat:"Anti-Aging",items:[
+    {code:"TA5",spec:"5mg",price:94},{code:"TA10",spec:"10mg",price:153},
+  ]},
+  {name:"Thymalin",cat:"Anti-Aging",items:[
+    {code:"TYI0",spec:"10mg",price:66},
+  ]},
+  {name:"SS-31",cat:"Anti-Aging",items:[
+    {code:"2S10",spec:"10mg",price:82},{code:"2S50",spec:"50mg",price:400},
+  ]},
+  {name:"MOTS-C",cat:"Anti-Aging",items:[
+    {code:"MS10",spec:"10mg",price:59},{code:"MS20",spec:"20mg",price:110},{code:"MS40",spec:"40mg",price:224},
+  ]},
+  {name:"AOD9604",cat:"Anti-Aging",items:[
+    {code:"5AD",spec:"5mg",price:94},{code:"10AD",spec:"10mg",price:176},
+  ]},
+  {name:"Selank",cat:"Immune/Neuro",items:[
+    {code:"SK5",spec:"5mg",price:47},{code:"SK10",spec:"10mg",price:82},
+  ]},
+  {name:"Semax",cat:"Immune/Neuro",items:[
+    {code:"SX5",spec:"5mg",price:30},{code:"SX10",spec:"10mg",price:60},
+  ]},
+  {name:"ARA-290",cat:"Immune/Neuro",items:[
+    {code:"RA10",spec:"10mg",price:73},
+  ]},
+  {name:"DSIP",cat:"Immune/Neuro",items:[
+    {code:"DS5",spec:"5mg",price:38},{code:"DS10",spec:"10mg",price:82},
+  ]},
+  {name:"Tesamorelin",cat:"Immune/Neuro",items:[
+    {code:"TSM5",spec:"5mg",price:94},{code:"TSM10",spec:"10mg",price:169},{code:"TSM20",spec:"20mg",price:329},
+  ]},
+  {name:"BBG Blend",cat:"Immune/Neuro",items:[
+    {code:"BBG70",spec:"70mg",price:240},
+  ]},
+  {name:"PT-141",cat:"Other",items:[
+    {code:"P41",spec:"10mg",price:66},
+  ]},
+  {name:"Aicar",cat:"Other",items:[
+    {code:"AR50",spec:"50mg",price:64},
+  ]},
+  {name:"Kisspeptin-10",cat:"Other",items:[
+    {code:"KS5",spec:"5mg",price:52},{code:"KS10",spec:"10mg",price:89},
+  ]},
+  {name:"Melanotan 1",cat:"Other",items:[
+    {code:"MT1",spec:"10mg",price:42},
+  ]},
+  {name:"Melanotan 2",cat:"Other",items:[
+    {code:"MT2",spec:"10mg",price:47},
+  ]},
+  {name:"HCG",cat:"Other",items:[
+    {code:"HCG1K",spec:"1000iu",price:20},{code:"HCG2K",spec:"2000iu",price:30},{code:"HCG5K",spec:"5000iu",price:72},{code:"HCG10K",spec:"10000iu",price:133},
+  ]},
+  {name:"Lemon Bottle",cat:"Other",items:[
+    {code:"LB",spec:"10mg",price:41},
+  ]},
+  {name:"Lipo-C",cat:"Other",items:[
+    {code:"LC216",spec:"10mg",price:50},
+  ]},
+  {name:"Adipotide",cat:"Other",items:[
+    {code:"AP5",spec:"5mg",price:165},
+  ]},
+  {name:"BAC Water (WA)",cat:"Other",items:[
+    {code:"WA3",spec:"3ml",price:7},{code:"WA10",spec:"10ml",price:9},
+  ]},
+  {name:"BAC Water (BA)",cat:"Other",items:[
+    {code:"BA3",spec:"3ml",price:7},{code:"BA10",spec:"10ml",price:9},
+  ]},
+];
+
+// Generate random stock (seeded for consistency)
+function seededRandom(seed) {
+  let s = seed;
+  return function() { s = (s * 16807 + 0) % 2147483647; return (s - 1) / 2147483646; };
+}
+const rand = seededRandom(42);
+function randQty() { return Math.floor(rand() * 9001) + 1000; }
+
+const catsOrder = ["GLP-1","HGH","Repair","Anti-Aging","Immune/Neuro","Other"];
+const catGroups = {};
+catsOrder.forEach(c => catGroups[c] = []);
+
+let totalItems = 0, totalStock = 0, totalValue = 0;
+
+families.forEach(f => {
+  f.items.forEach(it => {
+    const qty = randQty();
+    const amt = it.price * qty;
+    totalItems++; totalStock += qty; totalValue += amt;
+    catGroups[f.cat].push({...it, name: f.name, qty, amt});
+  });
+});
+
+// Summary bar
+document.getElementById('summaryBar').innerHTML =
+  `<span class="summary-chip">Products <b>${totalItems}</b></span>` +
+  `<span class="summary-chip">Stock <b>${totalStock.toLocaleString()}</b> boxes</span>` +
+  `<span class="summary-chip">Value <b>$${totalValue.toLocaleString()}</b></span>`;
+
+// Content
+let html = '';
+catsOrder.forEach(cat => {
+  const items = catGroups[cat];
+  if (!items.length) return;
+  const catStock = items.reduce((s,i) => s + i.qty, 0);
+  const catValue = items.reduce((s,i) => s + i.amt, 0);
+
+  html += `<div class="cat-header">
+    <span>${cat}</span>
+    <span style="font-size:.62rem;font-weight:400;color:#94a3b8">${items.length} products &middot; ${catStock.toLocaleString()} boxes &middot; $${catValue.toLocaleString()}</span>
+  </div>`;
+  html += `<div class="table-wrap"><table><thead><tr>
+    <th>CODE</th><th>PRODUCT</th><th>SPEC</th><th class="right">PRICE</th><th class="right">STOCK</th><th class="right">AMOUNT</th>
+  </tr></thead><tbody>`;
+
+  items.forEach(it => {
+    html += `<tr>
+      <td><span class="code">${it.code}</span></td>
+      <td><span class="name">${it.name}</span></td>
+      <td><span class="spec">${it.spec}</span></td>
+      <td class="right"><span class="price">$${it.price}</span></td>
+      <td class="right"><span class="stock">${it.qty.toLocaleString()}</span></td>
+      <td class="right"><span class="amount">$${it.amt.toLocaleString()}</span></td>
+    </tr>`;
+  });
+
+  html += `</tbody></table></div>`;
+});
+
+document.getElementById('content').innerHTML = html;
+</script>
+</body>
+</html>
