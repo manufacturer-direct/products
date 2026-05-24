@@ -199,14 +199,19 @@ body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:
 .empty-state{text-align:center;padding:40px;color:var(--text3);font-size:.8rem}
 
 .toast{
-  position:fixed;top:20px;left:50%;transform:translateX(-50%);
+  position:fixed;top:16px;left:50%;transform:translateX(-50%);
   background:#0f172a;color:#fff;
-  padding:10px 24px;border-radius:20px;
-  font-size:.75rem;font-weight:600;
-  z-index:300;opacity:0;transition:opacity .25s;
+  padding:14px 28px;border-radius:24px;
+  font-size:.8rem;font-weight:600;
+  z-index:500;opacity:0;transition:opacity .2s,transform .2s;
   pointer-events:none;
+  box-shadow:0 8px 32px rgba(0,0,0,.25);
+  white-space:nowrap;
+  max-width:90vw;
 }
-.toast.show{opacity:1}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(4px)}
+.toast.success{background:#059669;box-shadow:0 8px 32px rgba(5,150,105,.4)}
+.toast.error{background:#dc2626;box-shadow:0 8px 32px rgba(220,38,38,.4)}
 
 /* Confirmation Offer Modal */
 .confirm-overlay{
@@ -288,6 +293,7 @@ body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:
 }
 .btn-copy-order:active{filter:brightness(.9)}
 .btn-copy-order.copied{background:#10b981}
+.btn-copy-order.copy-fail{background:#dc2626}
 
 .confirm-close{
   margin-top:12px;
@@ -326,7 +332,7 @@ body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:
   WhatsApp for inquiries & orders<br>
   Professional Grade · Premium Quality · Trusted Supplier<br>
   <a href="stocklist.html" style="color:var(--accent);font-size:.6rem;text-decoration:none">📊 Stock List</a><br>
-  <span style="font-size:.55rem;color:var(--text3);opacity:.5">v.10</span>
+  <span style="font-size:.55rem;color:var(--text3);opacity:.5">v.11</span>
 </div>
 
 <!-- Floating Cart Button -->
@@ -531,7 +537,7 @@ const families = [
 ];
 
 // --- Version check for cache busting ---
-const APP_VERSION = '10';
+const APP_VERSION = '11';
 (function(){
   const stored = localStorage.getItem('biopeptide_version');
   if (stored && stored !== APP_VERSION) {
@@ -659,14 +665,63 @@ function buildOrderText() {
 }
 
 function copyTextToClipboard(text) {
-  navigator.clipboard.writeText(text).catch(() => {
+  return new Promise((resolve) => {
+    // Method 1: textarea + execCommand (most reliable on mobile)
     const ta = document.createElement('textarea');
     ta.value = text;
-    ta.style.position = 'fixed'; ta.style.left = '-9999px';
+    ta.style.position = 'fixed';
+    ta.style.top = '-9999px';
+    ta.style.left = '0';
+    ta.style.width = '2px';
+    ta.style.height = '2px';
+    ta.style.opacity = '0';
+    ta.style.pointerEvents = 'none';
+    ta.setAttribute('readonly', '');
     document.body.appendChild(ta);
+
+    // iOS requires the element to be editable for execCommand to work
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    if (isIOS) {
+      ta.contentEditable = true;
+      ta.readOnly = false;
+      const range = document.createRange();
+      range.selectNodeContents(ta);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+    ta.focus();
     ta.select();
-    document.execCommand('copy');
+    ta.setSelectionRange(0, 999999);
+
+    let success = false;
+    try {
+      success = document.execCommand('copy');
+    } catch(e) {}
+
+    if (isIOS) {
+      window.getSelection().removeAllRanges();
+    }
     document.body.removeChild(ta);
+
+    if (success) {
+      resolve(true);
+      return;
+    }
+
+    // Method 2: modern Clipboard API
+    navigator.clipboard.writeText(text).then(() => {
+      resolve(true);
+    }).catch(() => {
+      // Method 3: ClipboardItem with Blob
+      try {
+        const blob = new Blob([text], {type: 'text/plain'});
+        const item = new ClipboardItem({'text/plain': blob});
+        navigator.clipboard.write([item]).then(() => resolve(true)).catch(() => resolve(false));
+      } catch(e) {
+        resolve(false);
+      }
+    });
   });
 }
 
@@ -719,29 +774,43 @@ function startCountdown() {
   confirmTimer = setInterval(tick, 1000);
 }
 
-function copyOrderFromConfirm() {
+async function copyOrderFromConfirm() {
   const entries = Object.values(cart);
   if (entries.length === 0) { showToast('Cart is empty'); return; }
 
   const text = buildOrderText();
-  copyTextToClipboard(text);
+  const success = await copyTextToClipboard(text);
 
   const btn = document.getElementById('btnCopyOrder');
-  btn.textContent = '✅ Copied Successfully!';
-  btn.classList.add('copied');
-  showToast('✅ Order copied! Send to your representative now.');
+  if (success) {
+    btn.textContent = '✅ Copied Successfully!';
+    btn.classList.add('copied');
+    showToast('✅ Copied! Please send to your representative now.', true);
+  } else {
+    btn.textContent = '⚠️ Copy Failed - Try Again';
+    btn.classList.add('copy-fail');
+    showToast('⚠️ Copy failed. Please manually select and copy the text.', true);
+    setTimeout(() => {
+      btn.classList.remove('copy-fail');
+      btn.textContent = '📋 Copy Order List';
+    }, 3000);
+    return;
+  }
   setTimeout(() => {
     btn.textContent = '📋 Copy Order List';
     btn.classList.remove('copied');
   }, 2500);
 }
 
-function showToast(msg){
+function showToast(msg, important){
   const toast = document.getElementById('toast');
   toast.textContent = msg;
+  toast.className = 'toast';
+  if (msg.startsWith('✅')) toast.classList.add('success');
+  if (msg.startsWith('⚠️')) toast.classList.add('error');
   toast.classList.add('show');
   clearTimeout(toast._timeout);
-  toast._timeout = setTimeout(() => toast.classList.remove('show'), 2200);
+  toast._timeout = setTimeout(() => toast.classList.remove('show'), important ? 3000 : 2200);
 }
 
 // --- Catalog rendering ---
