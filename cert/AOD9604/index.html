@@ -6,83 +6,67 @@
 <title>Certificate of Analysis - AOD-9604</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f5f5; color: #222; padding: 40px 20px; }
-  .certificate { max-width: 800px; margin: 0 auto; background: #fff; border: 1px solid #ddd; padding: 50px 60px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
-  .badge { display: inline-block; background: #27ae60; color: #fff; padding: 6px 14px; border-radius: 3px; font-size: 13px; font-weight: 600; letter-spacing: 1px; margin-bottom: 20px; }
-  .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #1a5276; padding-bottom: 20px; margin-bottom: 25px; }
-  .header-left h1 { font-size: 22px; color: #1a5276; font-weight: 600; }
-  .header-right { text-align: right; font-size: 12px; color: #555; line-height: 1.6; }
-  .compound h2 { font-size: 26px; color: #1a5276; text-align: center; }
-  .sequence { font-size: 11px; color: #888; font-family: monospace; text-align: center; margin: 6px 0 20px; word-break: break-all; }
-  table.data { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
-  table.data th { background: #1a5276; color: #fff; padding: 10px 14px; text-align: left; font-size: 12px; }
-  table.data td { padding: 10px 14px; border-bottom: 1px solid #eee; }
-  table.data td:first-child { font-weight: 600; color: #555; width: 180px; }
-  table.peak { width: 100%; border-collapse: collapse; font-size: 13px; margin: 10px 0; }
-  table.peak th { background: #2c3e50; color: #fff; padding: 8px 12px; font-size: 11px; text-align: center; }
-  table.peak td { padding: 7px 12px; text-align: center; border-bottom: 1px solid #eee; }
-  table.peak tr.highlight td { font-weight: 600; color: #1a5276; }
-  .section-title { font-size: 15px; font-weight: 600; color: #1a5276; margin: 25px 0 10px; padding-bottom: 8px; border-bottom: 1px solid #ddd; }
-  .client-info { background: #f8f9fa; padding: 14px 18px; border-radius: 4px; margin: 15px 0; font-size: 13px; line-height: 1.8; }
-  .footer { margin-top: 30px; padding-top: 15px; border-top: 1px solid #ddd; font-size: 11px; color: #999; text-align: center; line-height: 1.8; }
-  .download-btn { display: inline-block; margin: 15px 0; padding: 10px 24px; background: #1a5276; color: #fff; text-decoration: none; border-radius: 4px; font-size: 13px; }
+  body { background: #e8e8e8; font-family: Arial, sans-serif; padding: 20px; }
+  .container { max-width: 900px; margin: 0 auto; }
+  .header-bar {
+    background: #1a5276; color: #fff; padding: 16px 24px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-radius: 6px 6px 0 0;
+  }
+  .header-bar h1 { font-size: 18px; font-weight: 600; }
+  .header-bar .badge {
+    background: #27ae60; color: #fff; padding: 5px 12px;
+    border-radius: 3px; font-size: 11px; font-weight: 600; letter-spacing: 1px;
+  }
+  .page { background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 12px; }
+  .page img { width: 100%; display: block; }
+  .page-label {
+    background: #f0f0f0; padding: 6px 16px; font-size: 11px;
+    color: #888; border-bottom: 1px solid #eee;
+  }
+  .footer-bar {
+    background: #fff; padding: 20px 24px; text-align: center;
+    border-radius: 0 0 6px 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-top: 2px;
+  }
+  .download-btn {
+    display: inline-block; padding: 12px 32px; background: #1a5276;
+    color: #fff; text-decoration: none; border-radius: 4px;
+    font-size: 14px; font-weight: 600;
+  }
   .download-btn:hover { background: #2471a3; }
-  .note { font-size: 11px; color: #888; margin-top: 10px; font-style: italic; }
+  .verify-text {
+    margin-top: 12px; font-size: 12px; color: #888;
+  }
+  .verify-text span { color: #27ae60; font-weight: 600; }
 </style>
 </head>
 <body>
-<div class="certificate">
-  <div class="badge">PROOF OF AUTHENTICITY</div>
-  <div class="header">
-    <div class="header-left">
-      <h1>Certificate of Analysis</h1>
-      <div style="font-size:12px;color:#666;">MZ Biolabs &middot; 2102 N Country Club Rd, Tucson, AZ 85716</div>
+<div class="container">
+
+  <div class="header-bar">
+    <h1>Certificate of Analysis &mdash; AOD-9604</h1>
+    <div class="badge">VERIFIED</div>
+  </div>
+
+  <div class="page">
+    <div class="page-label">Page 1 of 2</div>
+    <img src="page_1.png" alt="Certificate of Analysis - Page 1">
+  </div>
+
+  <div class="page">
+    <div class="page-label">Page 2 of 2</div>
+    <img src="page_2.png" alt="Certificate of Analysis - Page 2">
+  </div>
+
+  <div class="footer-bar">
+    <a href="AOD9604.pdf" class="download-btn">Download PDF</a>
+    <div class="verify-text">
+      <span>PROOF OF AUTHENTICITY</span> &mdash;
+      This certificate is verified online. Scan the QR code to return to this page.
     </div>
-    <div class="header-right">
-      contact@mzbiolabs.com<br>www.mzbiolabs.com
-    </div>
   </div>
-  <div class="compound">
-    <h2>AOD-9604 &mdash; 5mg</h2>
-    <div class="sequence">H-Tyr-Leu-Arg-Ile-Val-Gln-Cys(1)-Arg-Ser-Val-Glu-Gly-Ser-Cys(1)-Gly-Phe-OH</div>
-  </div>
-  <table class="data">
-    <tr><td>Compound</td><td>AOD-9604</td></tr>
-    <tr><td>Lot Number</td><td>2026-05-13</td></tr>
-    <tr><td>Analysis Date</td><td>2026-05-23</td></tr>
-    <tr><td>Purity</td><td><strong>99.06%</strong></td></tr>
-    <tr><td>Method</td><td>HPLC-UV-MS</td></tr>
-    <tr><td>PubChem CID</td><td>71300630</td></tr>
-  </table>
-  <div class="client-info">
-    <strong>Client:</strong> Sports Technology Labs<br>
-    <strong>Website:</strong> https://manufacturer-direct.github.io/products/<br>
-    <strong>Email:</strong> info@manufacturer-direct.com
-  </div>
-  <div class="section-title">HPLC-UV Purity Test</div>
-  <table class="peak">
-    <tr><th>#</th><th>Time (min)</th><th>Area</th><th>%Area</th><th>ID</th></tr>
-    <tr><td>1</td><td>2.16</td><td>2.36E+02</td><td>0.69</td><td></td></tr>
-    <tr><td>2</td><td>5.38</td><td>5.86E+01</td><td>0.17</td><td></td></tr>
-    <tr class="highlight"><td>3</td><td>5.54</td><td>3.38E+04</td><td><strong>99.06</strong></td><td>AOD-9604</td></tr>
-    <tr><td>4</td><td>5.93</td><td>4.05E+01</td><td>0.12</td><td></td></tr>
-  </table>
-  <div class="section-title">Mass Spectrometry &mdash; Identity Test</div>
-  <table class="data">
-    <tr><td>Identity</td><td>Confirmed using HPLC-MS</td></tr>
-    <tr><td>Expected Monoisotopic Mass</td><td>1813.86 Da</td></tr>
-    <tr><td>Measured Monoisotopic Mass</td><td>1813.90 Da</td></tr>
-    <tr><td>Molecular Weight</td><td><strong>Confirmed</strong></td></tr>
-  </table>
-  <div class="note">Note: Injectable peptides may contain salts and sugars to aid in solubility and act as pH buffers. These are not normally detected using UV and are not considered impurities.</div>
-  <div style="text-align:center;">
-    <a href="AOD9604.pdf" class="download-btn">Download Full Certificate (PDF)</a>
-  </div>
-  <div class="footer">
-    Analysis Performed by Ken Pendarvis, ChE &mdash; Analytical Chemist, MZ Biolabs<br>
-    Report Date: 2026-05-30<br>
-    This certificate is verified online. Scan QR code to return to this page.
-  </div>
+
 </div>
 </body>
 </html>
