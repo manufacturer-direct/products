@@ -332,7 +332,7 @@ body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:
   WhatsApp for inquiries & orders<br>
   Professional Grade · Premium Quality · Trusted Supplier<br>
   <a href="stocklist.html" style="color:var(--accent);font-size:.6rem;text-decoration:none">📊 Stock List</a><br>
-  <span style="font-size:.55rem;color:var(--text3);opacity:.5">v.14</span>
+  <span style="font-size:.55rem;color:var(--text3);opacity:.5">v.15</span>
 </div>
 
 <!-- Floating Cart Button -->
@@ -534,7 +534,7 @@ const families = [
 ];
 
 // --- Version check for cache busting ---
-const APP_VERSION = '14';
+const APP_VERSION = '15';
 (function(){
   const stored = localStorage.getItem('biopeptide_version');
   if (stored && stored !== APP_VERSION) {
@@ -565,6 +565,7 @@ function addToCart(family, item, e){
   cart[code].qty += 1;
   saveCart();
   updateCartUI();
+  updateProductButton(code);
   renderCartItems();
   showToast(`+1 ${item.code} added`);
 }
@@ -584,8 +585,8 @@ function removeFromCart(code){
   if (cart[code].qty <= 0) delete cart[code];
   saveCart();
   updateCartUI();
+  updateProductButton(code);
   renderCartItems();
-  renderProducts();
 }
 
 function clearCart(){
@@ -613,7 +614,19 @@ function updateCartUI(){
     countEl.style.display = 'none';
   }
   document.getElementById('cartTotal').textContent = '$' + getCartTotal();
-  renderProducts();
+}
+
+function updateProductButton(code) {
+  const btn = document.querySelector(`button[data-code="${code}"]`);
+  if (!btn) return;
+  const inCart = isInCart(code);
+  if (inCart) {
+    btn.textContent = '✓ ' + getCartQty(code);
+    btn.classList.add('in-cart');
+  } else {
+    btn.textContent = 'Add';
+    btn.classList.remove('in-cart');
+  }
 }
 
 function renderCartItems(){
@@ -877,7 +890,7 @@ function renderProducts() {
             <span class="v-code">${it.code}</span>
             <span class="v-spec">${it.spec}</span>
             <span class="v-price">$${it.price}<span style="font-weight:400;font-size:.65rem;color:var(--text3)">/box</span></span>
-            <button class="btn-add${inCart?' in-cart':''}" onclick="addToCart({name:'${f.name.replace(/'/g,"\\'")}'},{code:'${it.code}',spec:'${it.spec.replace(/'/g,"\\'")}',price:${it.price}},event)">
+            <button class="btn-add${inCart?' in-cart':''}" data-code="${it.code}" onclick="addToCart({name:'${f.name.replace(/'/g,"\\'")}'},{code:'${it.code}',spec:'${it.spec.replace(/'/g,"\\'")}',price:${it.price}},event)">
               ${inCart ? '✓ '+qty : 'Add'}
             </button>
           </div>`;
