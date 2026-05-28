@@ -332,7 +332,7 @@ body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:
   WhatsApp for inquiries & orders<br>
   Professional Grade · Premium Quality · Trusted Supplier<br>
   <a href="stocklist.html" style="color:var(--accent);font-size:.6rem;text-decoration:none">📊 Stock List</a><br>
-  <span style="font-size:.55rem;color:var(--text3);opacity:.5">v.13</span>
+  <span style="font-size:.55rem;color:var(--text3);opacity:.5">v.14</span>
 </div>
 
 <!-- Floating Cart Button -->
@@ -534,7 +534,7 @@ const families = [
 ];
 
 // --- Version check for cache busting ---
-const APP_VERSION = '13';
+const APP_VERSION = '14';
 (function(){
   const stored = localStorage.getItem('biopeptide_version');
   if (stored && stored !== APP_VERSION) {
@@ -831,6 +831,14 @@ function getCartQty(code) { return cart[code] ? cart[code].qty : 0; }
 
 function renderProducts() {
   const container = document.getElementById('productList');
+
+  // Save which families are currently open
+  const openIds = new Set();
+  container.querySelectorAll('.family-card.open').forEach(card => {
+    const head = card.querySelector('.family-head');
+    if (head) openIds.add(head.dataset.fid);
+  });
+
   let visible = families;
   if (currentCat !== 'all') visible = families.filter(f=>f.cat===currentCat);
   if (searchTerm) {
@@ -848,8 +856,9 @@ function renderProducts() {
   container.innerHTML = visible.map(f=>{
     const prices = f.items.map(i=>i.price);
     const range = prices.length>1 ? `$${Math.min(...prices)}–$${Math.max(...prices)}` : `$${prices[0]}`;
-    return `<div class="family-card">
-      <div class="family-head" onclick="this.parentElement.classList.toggle('open')">
+    const openClass = openIds.has(f.id) ? ' open' : '';
+    return `<div class="family-card${openClass}">
+      <div class="family-head" data-fid="${f.id}" onclick="this.parentElement.classList.toggle('open')">
         <div class="family-dot" style="background:${f.color}"></div>
         <div class="family-info">
           <div class="family-name-row">
