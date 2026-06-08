@@ -295,6 +295,23 @@ body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:
 .btn-copy-order.copied{background:#10b981}
 .btn-copy-order.copy-fail{background:#dc2626}
 
+.manual-copy-box{
+  background:#fef3c7;border:2px dashed #f59e0b;
+  border-radius:12px;padding:16px;margin-bottom:12px;text-align:center;
+}
+.manual-copy-label{font-size:.7rem;font-weight:700;color:#92400e;margin-bottom:8px}
+.manual-copy-textarea{
+  width:100%;height:120px;padding:10px;border-radius:8px;border:1px solid #f59e0b;
+  font-family:monospace;font-size:.65rem;resize:none;background:#fffbeb;
+  color:#1c1917;line-height:1.4;-webkit-user-select:text;user-select:text;
+}
+.manual-copy-textarea:focus{outline:2px solid #f59e0b;outline-offset:-2px}
+.btn-copy-retry{
+  width:100%;margin-top:10px;padding:12px;border-radius:12px;border:none;
+  background:#f59e0b;color:#1c1917;font-size:.78rem;font-weight:700;cursor:pointer;
+}
+.btn-copy-retry:active{filter:brightness(.9)}
+
 .confirm-close{
   margin-top:12px;
   background:none;border:none;
@@ -332,7 +349,7 @@ body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:
   WhatsApp for inquiries & orders<br>
   Professional Grade · Premium Quality · Trusted Supplier<br>
   <a href="stocklist.html" style="color:var(--accent);font-size:.6rem;text-decoration:none">📊 Stock List</a><br>
-  <span style="font-size:.55rem;color:var(--text3);opacity:.5">v.15</span>
+  <span style="font-size:.55rem;color:var(--text3);opacity:.5">v.16</span>
 </div>
 
 <!-- Floating Cart Button -->
@@ -384,6 +401,11 @@ body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:
       Please copy the order list and send it to<br>your dedicated customer service representative ASAP
     </div>
 
+    <div class="manual-copy-box" id="manualCopyBox" style="display:none">
+      <div class="manual-copy-label">⬇️ Tap and hold to select &amp; copy:</div>
+      <textarea class="manual-copy-textarea" id="manualCopyTextarea" readonly onclick="this.select();manualCopyText()" onfocus="this.select()"></textarea>
+      <button class="btn-copy-retry" id="btnCopyRetry" onclick="copyOrderFromConfirm()">📋 Try Copy Again</button>
+    </div>
     <button class="btn-copy-order" id="btnCopyOrder" onclick="copyOrderFromConfirm()">
       📋 Copy Order List
     </button>
@@ -534,7 +556,7 @@ const families = [
 ];
 
 // --- Version check for cache busting ---
-const APP_VERSION = '15';
+const APP_VERSION = '16';
 (function(){
   const stored = localStorage.getItem('biopeptide_version');
   if (stored && stored !== APP_VERSION) {
@@ -676,62 +698,62 @@ function buildOrderText() {
 
 function copyTextToClipboard(text) {
   return new Promise((resolve) => {
-    // Method 1: textarea + execCommand (most reliable on mobile)
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.top = '-9999px';
-    ta.style.left = '0';
-    ta.style.width = '2px';
-    ta.style.height = '2px';
-    ta.style.opacity = '0';
-    ta.style.pointerEvents = 'none';
-    ta.setAttribute('readonly', '');
-    document.body.appendChild(ta);
+    // Method 1: modern Clipboard API (most reliable on modern iOS/Android over HTTPS)
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      // Use a small timeout to ensure we're still within the user gesture
+      navigator.clipboard.writeText(text).then(() => {
+        resolve(true);
+      }).catch(() => {
+        // Fall through to Method 2
+        tryMethod2();
+      });
+    } else {
+      tryMethod2();
+    }
 
-    // iOS requires the element to be editable for execCommand to work
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    if (isIOS) {
-      ta.contentEditable = true;
+    function tryMethod2() {
+      // Method 2: textarea + execCommand (fallback for older browsers)
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      // Must be in viewport for iOS — don't use negative positioning
+      ta.style.position = 'fixed';
+      ta.style.top = '0';
+      ta.style.left = '0';
+      ta.style.width = '1px';
+      ta.style.height = '1px';
+      ta.style.opacity = '0.01';
+      ta.style.pointerEvents = 'none';
+      ta.style.zIndex = '-1';
+      ta.setAttribute('readonly', '');
+      document.body.appendChild(ta);
+
+      // iOS needs contentEditable + proper selection
+      ta.contentEditable = 'true';
       ta.readOnly = false;
-      const range = document.createRange();
-      range.selectNodeContents(ta);
-      const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(range);
-    }
-    ta.focus();
-    ta.select();
-    ta.setSelectionRange(0, 999999);
+      ta.focus();
+      ta.select();
 
-    let success = false;
-    try {
-      success = document.execCommand('copy');
-    } catch(e) {}
-
-    if (isIOS) {
-      window.getSelection().removeAllRanges();
-    }
-    document.body.removeChild(ta);
-
-    if (success) {
-      resolve(true);
-      return;
-    }
-
-    // Method 2: modern Clipboard API
-    navigator.clipboard.writeText(text).then(() => {
-      resolve(true);
-    }).catch(() => {
-      // Method 3: ClipboardItem with Blob
+      // Use both selection methods for max compatibility
       try {
-        const blob = new Blob([text], {type: 'text/plain'});
-        const item = new ClipboardItem({'text/plain': blob});
-        navigator.clipboard.write([item]).then(() => resolve(true)).catch(() => resolve(false));
-      } catch(e) {
-        resolve(false);
-      }
-    });
+        const range = document.createRange();
+        range.selectNodeContents(ta);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      } catch(e) {}
+      ta.setSelectionRange(0, 999999);
+
+      let success = false;
+      try {
+        success = document.execCommand('copy');
+      } catch(e) {}
+
+      // Clean up selection
+      try { window.getSelection().removeAllRanges(); } catch(e) {}
+      document.body.removeChild(ta);
+
+      resolve(success);
+    }
   });
 }
 
@@ -746,7 +768,9 @@ function openConfirmModal() {
   // Reset & start countdown
   startCountdown();
   document.getElementById('btnCopyOrder').textContent = '📋 Copy Order List';
-  document.getElementById('btnCopyOrder').classList.remove('copied');
+  document.getElementById('btnCopyOrder').classList.remove('copied','copy-fail');
+  document.getElementById('btnCopyOrder').style.display = '';
+  document.getElementById('manualCopyBox').style.display = 'none';
   document.getElementById('confirmOverlay').classList.add('open');
 }
 
@@ -784,6 +808,18 @@ function startCountdown() {
   confirmTimer = setInterval(tick, 1000);
 }
 
+function manualCopyText() {
+  const ta = document.getElementById('manualCopyTextarea');
+  ta.select();
+  ta.setSelectionRange(0, 999999);
+  // Also try clipboard API on user interaction
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(ta.value).then(() => {
+      showToast('✅ Copied!', true);
+    }).catch(() => {});
+  }
+}
+
 async function copyOrderFromConfirm() {
   const entries = Object.values(cart);
   if (entries.length === 0) { showToast('Cart is empty'); return; }
@@ -792,24 +828,26 @@ async function copyOrderFromConfirm() {
   const success = await copyTextToClipboard(text);
 
   const btn = document.getElementById('btnCopyOrder');
+  const manualBox = document.getElementById('manualCopyBox');
+  const manualTa = document.getElementById('manualCopyTextarea');
+
   if (success) {
+    manualBox.style.display = 'none';
+    btn.style.display = '';
     btn.textContent = '✅ Copied Successfully!';
     btn.classList.add('copied');
     showToast('✅ Copied! Please send to your representative now.', true);
-  } else {
-    btn.textContent = '⚠️ Copy Failed - Try Again';
-    btn.classList.add('copy-fail');
-    showToast('⚠️ Copy failed. Please manually select and copy the text.', true);
     setTimeout(() => {
-      btn.classList.remove('copy-fail');
       btn.textContent = '📋 Copy Order List';
-    }, 3000);
-    return;
+      btn.classList.remove('copied');
+    }, 2500);
+  } else {
+    // Show manual fallback: visible textarea for long-press to copy
+    btn.style.display = 'none';
+    manualTa.value = text;
+    manualBox.style.display = 'block';
+    showToast('⚠️ Tap and hold the text below to copy', true);
   }
-  setTimeout(() => {
-    btn.textContent = '📋 Copy Order List';
-    btn.classList.remove('copied');
-  }, 2500);
 }
 
 function showToast(msg, important){
